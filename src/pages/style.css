@@ -1,0 +1,230 @@
+.email-address{
+    display: black;
+    margin: 5em auto;
+    border: none;
+    padding: 0;
+    width: 40ch;
+        letter-spacing: 0.5ch;
+align-self: center;
+}
+.email-address:focus{
+    outline: none;
+    color: black;
+}
+
+.seperator {
+    float: left;
+    width: 100%;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    margin: 50px 0 0;
+  }
+ .seperator b {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    text-align: center;
+    line-height: 40px;
+    background: #fff;
+    display: inline-block;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    position: relative;
+    top: -22px;
+    z-index: 1;
+  }
+  .my-facebook-button-class{
+  background-color: #4C69B9 !important;
+  color:white;
+  width: 100%;
+  height: 3rem;
+  border-radius:3rem;
+  border-width: 2px;
+  }
+  .header {
+    position: fixed;
+    height: 90px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    transition: .3s ease-in;
+    overflow: hidden;
+  
+  }
+  .header-bg {
+    
+    background-color: rgba(255, 255, 255);
+    border-bottom:1px solid #e4e4e7;
+   
+  }
+  
+  
+  .header .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1240px;
+    margin: auto;
+    height: 100%;
+    padding: 0 1rem;
+  }
+  
+  .header .nav-menu a {
+    color: black;
+  }
+ 
+  
+  .header .navbar img {
+    width: 250px;
+    height: auto;
+  }
+  
+  .header .nav-menu {
+    display: flex;
+  }
+  
+  .header .nav-item {
+    padding: 1rem;
+    font-weight: 500;
+  }
+  
+  .header .nav-item a:hover {
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--secondary-color);
+  }
+  
+  .hamburger {
+    display: none;
+  }
+  
+  
+  @media screen and (max-width:940px) {
+    .header {
+        max-width: 100%;
+        background-color: white;
+    }
+  
+    .header .navbar {
+        max-width: 100%;
+    }
+  
+    .hamburger {
+        display: block;
+    }
+  
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 90px;
+        flex-direction: column;
+        background-color: white;
+        width: 100%;
+        height: 90vh;
+        z-index: 999;
+        text-align: center;
+        transition: .3s;
+        
+    }
+  
+    .nav-menu.active {
+        left: 0;
+    }
+    .nav-menu li  {
+      color:#9ca3af !important;
+      font-size: 2rem;
+      
+  }
+  
+  
+    .nav-item {
+        margin: 1.5rem 0;
+    }
+  
+    .header .navbar img {
+        width: 150px;
+    }
+  }
+  
+  .ParallaxMainContent {
+    background-color: black;
+    color: #b8c1ec;
+    position: relative;
+    height: 100%;
+  }
+  .ParallaxMainContent h3 {
+    color: gold;
+    text-align: center;
+  }
+  
+  /* Video Parallax Section*/
+  .ParallaxVideo {
+    height: 300px;
+  }
+  
+  .ParallaxVideo video {
+    object-fit: cover;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+  
+  .carousel {
+    display: flex;
+    height: 500px;
+    width: 900%;
+    max-width: 800px;
+    background-color: purple;
+  }
+  
+  .carousel_wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: red;
+  }
+  
+  .carousel_card {
+    display: flex;
+    flex: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    -webkit-box-shadow: 0px 0px 11px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 0px 11px 3px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+    transition: 0.5s ease-in-out;
+  }
+  
+  .carousel_card-active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: visible;
+  }
+  
+  .card_image {
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  .card_overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    padding: 40px 30px;
+    align-items: flex-end;
+  }
+  
+  .card_title {
+    color: white;
+    font-size: 30px;
+  }
