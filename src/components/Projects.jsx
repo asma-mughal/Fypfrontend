@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { projects1 } from '../constants/constants';
 import { clock} from '../assets/index';
 import styles from '../style';
@@ -11,9 +11,14 @@ import './style.css';
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect } from 'react';
 const Projects = ({campaign,setCampaign}) => {
-  const {getAllCampaigns, campaignsRecord} = useAuth();
+  const {getAllCampaigns, campaignsRecord, getOneCampaign, simpleCampaign} = useAuth();
+  
+  const user = localStorage.getItem("mainUser")
+  const newUser = (JSON.parse(user))
+  const mainId = (newUser?._id)
   useEffect(()=>{
   getAllCampaigns()
+
   },[])
   const convertSeconds =(seconds) =>{
     const days = seconds / 86400;
@@ -35,8 +40,14 @@ const Projects = ({campaign,setCampaign}) => {
        const handleClick = (e,i) =>{
         e.preventDefault();
         const campaignId = localStorage.setItem("cmpId", i)
+        getOneCampaign(i)
+
         navigate("/projPage")
        }
+       const calculateProgressPercentage = (raisedFunds, targetFunds) => {
+        return (raisedFunds / targetFunds) * 100;
+      };
+    
   return (
     <div name="projects" id="projects">
     <Slider {...settings}
@@ -51,7 +62,7 @@ const Projects = ({campaign,setCampaign}) => {
           <div class="grid grid-cols-1 sm:grid-cols-1
            md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-5 bg-white">
           <div class=" w-full lg:w-full lg:flex  ">
-          <img
+          <img  
                 className="object-cover w-full
                 h-80
                 lg:w-96 lg:h-96"
@@ -81,7 +92,7 @@ const Projects = ({campaign,setCampaign}) => {
                 <div class=" w-50 m-5 lg:m-0 xl:m-0 bg-gray-200 rounded-full dark:bg-gray-700 mb-5">
     <div class="bg-secondary text-xs font-medium text-blue-100 text-center p-0.5 
     leading-none rounded-full" style={{
-       width:`${i.raisedFunds}%`
+       width:`${calculateProgressPercentage(i?.raisedFunds,i?.targetFunds)}%`
     }}><text className='font-poppins text-white'> {i.raisedFunds ? i?.raisedFunds : 0}%</text></div>
   </div>
                 <div class="flex flex-row m-5  xl:m-0 ">
@@ -91,13 +102,15 @@ const Projects = ({campaign,setCampaign}) => {
   </div>
  
   <div className='text-transparent'>
-
+    {i?.userId === mainId &&
     <button 
             onClick= {(e)=>{handleClick(e, i?.campaignId)}}
             class="bg-secondary border-secondary w-full font-poppins rounded-3xl border p-2
             text-white transition font-bold ml-5 ">
   Donate
-</button>
+</button>  }
+    
+    
   </div>
 
 </div>

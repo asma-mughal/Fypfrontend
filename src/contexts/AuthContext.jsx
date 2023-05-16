@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {auth} from '../constants/firebase';
-import { Link, useNavigate  } from 'react-router-dom';
+import { Link, Navigate, useNavigate  } from 'react-router-dom';
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword,
     signOut,onAuthStateChanged, sendPasswordResetEmail , updateEmail, updatePassword, GoogleAuthProvider,
     signInWithPopup, signInWithRedirect,
@@ -36,6 +36,7 @@ export function AuthProvider({children}) {
     const [successStories, setSuccessStories] = useState('');
     const [questionList, setQuestionList] = useState([]);
     const [campaings, setCampaigns] = useState([]);
+    const [campaignSuccess, setCampaignSuccess] = useState(false);
     const [asnwereList, setAnsList] = useState();
     const [questionMsg, setQuestionMsg] = useState();
     const [userMainId , setUserMainId] = useState();
@@ -44,7 +45,15 @@ export function AuthProvider({children}) {
     const [myCampaign, setMyCampaign] = useState();
     const [funders, setFunders] = useState();
     const [stats, setStats] = useState();
+    const [donateMessage, setDonateMessage] = useState(false);
     const [projectsRecord, setProjectsRecord] = useState();
+    const [projectsMessage, setProjectMessage] = useState(false);
+    const [moduleMessage, setModuleMessage] = useState(false);
+    const [donateProjectMessage, setDonateProjectMessage] = useState(false);
+    const [projectModules, setProjectModules] = useState();
+    const [projectStats, setProjectStats] = useState();
+    const [userCampaigns, setUserCampaign] = useState();
+    const [userProjects, setUserProjects] = useState();
     const chatUrl ="http://localhost:3001";
     const url ="http://localhost:5000"
     const secondUrl = "http://localhost:3000";
@@ -119,6 +128,7 @@ export function AuthProvider({children}) {
     const getUser  = async() =>{
       const token = localStorage.getItem("token")
       const newtoken = JSON.parse(token)
+      
   const response =  await axios.get(`${url}/api/user/me`,
   { headers: {"x-access-token" : `${newtoken.value}`} });
     return response.data.data;
@@ -358,8 +368,10 @@ export function AuthProvider({children}) {
       
     async function  DatabaseSoicalLogin(type, response) {
         console.log(type,response)
-        if(!testSocialLogin){
-            if(response ){
+        const socialData = localStorage.getItem("socialData");
+        console.log(socialData)
+        if(!testSocialLogin && socialData){
+            if(response){
                 fetch(`${url}/api/auth/signup`, {
                     method: 'POST',
                     headers: {
@@ -382,8 +394,10 @@ export function AuthProvider({children}) {
                         console.log(
                             "POST Response",
                             "Response Body -> " + JSON.stringify(responseData) + 
-                            alert("Congratulation") + tokenSetting("token",JSON.stringify(responseData.data.token))
-                            
+                            alert("Congratulation") +
+                             tokenSetting(responseData?.data?.token)+
+                             setLoginMsg((responseData?.statusText))+
+                             localStorage.setItem("socialData",JSON.stringify(responseData.data.user))
                         )
                     })
                     .catch(error => console.log(error.toString()))
@@ -508,11 +522,12 @@ export function AuthProvider({children}) {
                     description:formValues.description,
                     categoryId:formValues.category,
                     deadline:seconds,
-                    creator:address,
+                    creator:"0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14",
                     targetFunds:formValues.targetfunds
               };
               axios.post(`${secondUrl}/campaign/create-campaign`, payload)
                 .then(response => {
+                setCampaignSuccess(response.data.success)
                 alert(response.data.message); // Handle the response from the server
                 })
                 .catch(error => {
@@ -527,7 +542,6 @@ export function AuthProvider({children}) {
               };
             const response =  await axios.post(`${secondUrl}/campaign/get-campaigns`, payload);
             setCampaignRecord(response?.data?.campaigns)
-            //setCampaigns(response.data)
               }
               const deployContract =() =>{
               const address =   localStorage.getItem("userAddress");
@@ -552,7 +566,25 @@ export function AuthProvider({children}) {
                     })
                     .catch(error => console.log(error.toString()))
               }
-              const getOneCampaign  = async() =>{
+              const getOneCampaign  = async(id) =>{
+                const user = localStorage.getItem("mainUser")
+                const newUser = (JSON.parse(user))
+                console.log(id)
+                const payload = {
+                    "userId":"",
+                    "campaignId":id
+                  };
+                  axios.post(`${secondUrl}/campaign/get-campaign`, payload)
+                    .then(response => {
+                        //console.log(response.data)
+                        setSimpleCampaign(response?.data?.campaign)
+                    })
+                    .catch(error => {
+                      console.log(error);
+                    });
+                    
+            }
+            const getOneCampaignUser  = async() =>{
                 const user = localStorage.getItem("mainUser")
                 const newUser = (JSON.parse(user))
                 const payload = {
@@ -561,13 +593,15 @@ export function AuthProvider({children}) {
                   };
                   axios.post(`${secondUrl}/campaign/get-campaigns`, payload)
                     .then(response => {
+                      
                         //setMyCampaign(response.data)
-                        setMyCampaign(response.data.campaigns)
+                    setUserCampaign(response.data.campaigns)
                      //setAnsList(response.data.data);
                     })
                     .catch(error => {
                       console.log(error);
                     });
+                    
                     
             }
             const donateFunds = (amount) =>{
@@ -595,7 +629,8 @@ export function AuthProvider({children}) {
                         console.log(
                             "POST Response",
                             "Response Body -> " + 
-                            JSON.stringify(responseData)+alert(responseData.message) 
+                            JSON.stringify(responseData)+alert(responseData.message) +
+                             setDonateMessage(responseData.success)
                             
                         )// +loginChat(password)
                     })
@@ -615,7 +650,7 @@ export function AuthProvider({children}) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ownerAddress:address,
+                        ownerAddress:"0x8CabBd1D5fD70B2000EA5A15c9257add31444442",
                         campaignId: cmpId,
                         userId:userId
                     })
@@ -649,6 +684,7 @@ export function AuthProvider({children}) {
                 const user = localStorage.getItem("mainUser")
                 const newUser = (JSON.parse(user))
                 const userId = (newUser._id)
+            
                 const payload = {
                     "userId":userId,
                   };
@@ -670,18 +706,19 @@ export function AuthProvider({children}) {
                 const address =   localStorage.getItem("userAddress");
                 const payload = {
                         userId: newUser?._id,
-                        creator: address, 
+                        creator: "0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14", 
                         title:formValues.title,
                         description:formValues.description,
                         categoryId:formValues.category,
                         imageUrl:formValues.image,
                         targetFunds:formValues.targetfunds,
                         investerId : "20",
-                        investerAddress:"0xDaD86949B5084b0f594f31d3766ab67B78335800"
+                        investerAddress:"0x6e370895E76d79FB764e8d25D75036D9b9fe219c"
                   };
                   //${secondUrl}/project/create-project
                   axios.post(`${secondUrl}/project/create-project`, payload)
                     .then(response => {
+                        setProjectMessage(response.data.success)
                     alert(response.data.message); // Handle the response from the server
                     })
                     .catch(error => {
@@ -696,39 +733,133 @@ export function AuthProvider({children}) {
                 const endDate = calculateDeadline(formValues.endDate);
                 const payload = {
                         projectId: formValues.category,
-                        creator: address, 
+                        creator: "0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14", 
                         title:formValues.title,
                         description:formValues.description,
                         startDate:startDate,
                         targetFunds:formValues.targetfunds,
                         endDate:endDate
                   };
+                  
                   //${secondUrl}/project/create-module
                   axios.post(`${secondUrl}/project/create-module`, payload)
                     .then(response => {
+                    setModuleMessage(response.data.success)
                     alert(response.data.message); // Handle the response from the server
                     })
                     .catch(error => {
                       console.log(error); // Handle any errors that occurred during the request
                     });
                }
-               const getAllProjects  = async() =>{
+               const getAllProjects  = async(id) =>{
+                
                 const payload = {
-                    userId:"",
+                    userId:id ? id : "",
                     categoryId:""
                   };
                 const response =  await axios.post(`${secondUrl}/project/get-projects`, payload);
                 setProjectsRecord(response?.data?.projects)
                   }
-                  const getOneProject = async() =>{
-                    const user = localStorage.getItem("mainUser")
-                    const newUser = (JSON.parse(user))
+                  const getUserProjects  = async(id) =>{
+                
                     const payload = {
-                        userId:newUser?._id,
+                        userId:id ,
+                        categoryId:""
                       };
                     const response =  await axios.post(`${secondUrl}/project/get-projects`, payload);
-                  
+                    //console.log(response.data)
+                   setUserProjects(response?.data?.projects)
                       }
+                  const getOneProject = async(id) =>{
+                        const payload = {
+                        projectId:id,
+                      };
+                    const response =  await axios.post(`${secondUrl}/project/get-project`, payload);
+                    setProjectModules(response?.data?.project?.modules)
+                      }
+                      const donateFundsProjects = (amount) =>{
+                        const address = localStorage.getItem("userAddress")
+                        const user = localStorage.getItem("mainUser")
+                        const newUser = (JSON.parse(user))
+                        const userId = (newUser._id)
+                        const projectId = localStorage.getItem("prjId")
+                        const moduleId = localStorage.getItem("moduleId")
+                        //console.log(amount, userId, projectId, moduleId)
+                        //${secondUrl}/project/donate-project
+                        fetch(`${secondUrl}/project/donate-project`, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                projectId:projectId,
+                                moduleId:moduleId,
+                                userAddress:"0x78Fa5b48258af47d70673F8d02C8b226dD50dD02",
+                                amount: amount.targetfunds,
+                                userId:userId
+                            })
+                        })
+                            .then((response) => response.json())
+                            .then((responseData) => {
+                                console.log(
+                                    "POST Response",
+                                    "Response Body -> " + 
+                                    JSON.stringify(responseData)+alert(responseData.message) +
+                                     setDonateProjectMessage(responseData.success)
+                                    
+                                )// +loginChat(password)
+                            })
+                            .catch(error => console.log(error.toString()))
+                    }
+                    const withDrawProjectFunds  = async(moduleId) =>{
+                        const address = localStorage.getItem("userAddress")
+                        const user = localStorage.getItem("mainUser")
+                        const newUser = (JSON.parse(user))
+                        const userId = (newUser._id)
+                        const projectId = localStorage.getItem("prjId")
+                        //${secondUrl}/project/withdraw-funds
+                        fetch(`${secondUrl}/project/withdraw-funds`, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                ownerAddress:"0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14",
+                                projectId:projectId,
+                                moduleId:moduleId,
+                                userId:userId
+                            })
+                        })
+                            .then((response) => response.json())
+                            .then((responseData) => {
+                                console.log(
+                                    "POST Response",
+                                    "Response Body -> " + 
+                                    JSON.stringify(responseData) +
+                                    alert(responseData.message)
+                                    
+                                )// +loginChat(password)
+                            })
+                            .catch(error => console.log(error.toString()))
+                    } 
+                    const getUserProjectStat = () =>{
+                        const user = localStorage.getItem("mainUser")
+                        const newUser = (JSON.parse(user))
+                        const userId = (newUser._id)
+                        const payload = {
+                            "userId":userId,
+                          };
+                          //${secondUrl}/campaign/get-user-stats
+                          axios.post(`${secondUrl}/project/get-users-stats`, payload)
+                            .then(response => {
+                                setProjectStats(response.data.stats)
+                            })
+                            .catch(error => {
+                              console.log(error);
+                            });
+                    }
         useEffect(()=>{
             //at first it'll check whether the user is signIn or not
         const unsubscribe = onAuthStateChanged(auth, ()=>{
@@ -797,14 +928,28 @@ export function AuthProvider({children}) {
      getUserStat,
      getCampaignFunder,
      campaignsRecord,
-     simpleCampaign, setSimpleCampaign,
+     simpleCampaign,
      myCampaign,
      funders,
      stats,
      projectStore,
      createModule,
      projectsRecord,
-     getAllProjects
+     getAllProjects,
+     campaignSuccess,
+     donateMessage,
+     projectsMessage
+    ,moduleMessage,
+    donateFundsProjects,
+    donateProjectMessage,
+    getUserProjectStat,
+    withDrawProjectFunds,
+    getOneProject,
+    projectModules,
+    projectStats,
+    getOneCampaignUser,
+    userCampaigns,userProjects,
+    getUserProjects
     }
   return (
   <AuthContext.Provider value={value}>

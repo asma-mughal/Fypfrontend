@@ -8,28 +8,8 @@ import { useAuth } from '../contexts/AuthContext'
 const CampaignPage = ({campaign}) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token")
-  const [errorMessage, setErrorMessage] = useState(null);
-	const [defaultAccount, setDefaultAccount] = useState(null);
-	const [userBalance, setUserBalance] = useState(null);
-	const [connButtonText, setConnButtonText] = useState('Connect Wallet');
   const newToken = JSON.parse(token)
-  const {deployContract,getOneCampaign,simpleCampaign} =useAuth()
-
-	const getAccountBalance = (account) => {
-		window.ethereum.request({method: 'eth_getBalance', params: [account, 'latest']})
-		.then(balance => {
-			setUserBalance(ethers.utils.formatEther(balance));
-		})
-		.catch(error => {
-			setErrorMessage(error.message);
-		});
-	};
-
-  useEffect(()=>{
-    const campaignId = localStorage.getItem("cmpId")
-    getOneCampaign(campaignId)
-  },[simpleCampaign])
-
+  const {simpleCampaign} =useAuth()
   const handleDonate = useCallback(async () => {
     const token = localStorage.getItem("token")
     const newtoken = JSON.parse(token)
@@ -40,14 +20,21 @@ const CampaignPage = ({campaign}) => {
      else {
       alert("Please Login First")
      }
-  }, []);
+  },  []);
+  useEffect(()=>{
+    const id =localStorage.getItem("cmpId")
+    getOneCampaign(id)
+  },[])
   //window.ethereum.on('accountsChanged',accountChangedHandler);
   const convertSeconds =(seconds) =>{
     const days = seconds / 86400;
     const roundedDays = Math.round(days);
     return roundedDays;
   }
-   
+  const calculateProgressPercentage = (raisedFunds, targetFunds) => {
+    return (raisedFunds / targetFunds) * 100;
+  };
+
   return (
     <>
     <div class="p-16">
@@ -105,7 +92,7 @@ const CampaignPage = ({campaign}) => {
 <div class="w-20 items-center pl-10 mt-10 bg-gray-200 rounded-full  dark:bg-gray-700 mb-5">
     <div class="bg-secondary text-xs font-medium text-blue-100 text-center p-0.5 
     leading-none rounded-full" style={{
-       width:`${simpleCampaign?.raisedFunds}%`
+       width:`${calculateProgressPercentage(simpleCampaign?.raisedFunds,simpleCampaign?.targetFunds)}%`
     }}>
       <text className='font-poppins text-white '> {simpleCampaign?.raisedFunds}%</text></div>
   </div>

@@ -39,6 +39,30 @@ const ReadOnlyRow = ({ item, handleEditClick, handleLogout ,handlePassword,handl
       >
         {("Change Password")}
       </button>
+      <button
+        type="button"
+        className="group relative flex
+        cursor-pointer
+                w-40 justify-center mt-5 rounded-md border border-transparent bg-secondary
+                 py-1 px-2 text-sm font-medium text-white hover:bg-white
+                 hover:text-black hover:border-secondary
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        onClick={(e)=>handleCampaign(e)}
+      >
+        {("Create Campaign")}
+      </button>
+      <button
+        type="button"
+        className="group relative flex
+        cursor-pointer
+                w-40 justify-center mt-5 rounded-md border border-transparent bg-secondary
+                 py-1 px-2 text-sm font-medium text-white hover:bg-white
+                 hover:text-black hover:border-secondary
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        onClick={(e)=>handleProjects(e)}
+      >
+        {("Create Projects")}
+      </button>
     </td>
   </tr>
   )

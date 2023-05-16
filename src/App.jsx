@@ -20,6 +20,10 @@ import CreateModule from './components/Projects/CreateModule';
 import TestProfile from './components/TestProfile';
 import ShowFunders from './components/Campaigns/showFunders';
 import UserStats from './components/Campaigns/UserStats';
+import GetModules from './components/Projects/GetModules';
+import DonateProjects from './components/Projects/donateProjects';
+import StatsProject from './components/Projects/StatsProject';
+import MyModules from './components/Projects/myModules';
 const App = () => {
 const [campaign,setCampaign] = useState({});
 const [question,setQuestion] = useState({});
@@ -59,8 +63,12 @@ React.useEffect(() => {
     <Route path='/createModule' element={<CreateModule />} />
     <Route path="/testProfile" element={<TestProfile />}   />
     <Route path='/createCampaign' element={<CreateCampaign />} />
+    <Route  path='/projectStats' element={<StatsProject />}/>
     <Route path='/showFundCamp' element={<ShowFunders />} />
+    <Route path='/getModules' element={<GetModules />} />
     <Route path='/showStatsCamp' element={<UserStats />} />
+    <Route  path='/donateProject' element={<DonateProjects />}/>
+    <Route  path='/myModules' element={<MyModules />}/>
       <Route path='/projPage' element={<CampaignPage campaign={campaign} setCampaign={setCampaign} />} />
 <Route path ="/dis"  element={ <Index  question={question} setQuestion={setQuestion}   />}/>
   <Route path ="/add" element={ <QuestionPage  />} />

@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom';
 
 const CreateCampaign = () => {
-    const { getCategoriesForQuestion, campignStore,userMainId } = useAuth()
+    const { getCategoriesForQuestion, campignStore,userMainId,campaignSuccess } = useAuth()
     const [categories, setCategories] = useState();
     const navigate = useNavigate()
     useEffect(()=>{
@@ -19,7 +19,7 @@ const CreateCampaign = () => {
         imageUrl: "",
         deadline: "",
         targetfunds: "",
-        category: "",
+        category: "0",
       });
       const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -50,6 +50,11 @@ const CreateCampaign = () => {
        navigate("/")
      }
      },[newtoken?.value])
+     useEffect(()=>{
+     if(campaignSuccess) {
+      navigate("/testProfile")
+     }
+     },[campaignSuccess])
   return (
    <>
    <section class="max-w-4xl p-6 mx-auto bg-nuetral-50 rounded-md font-poppins shadow-md dark:bg-gray-800 mt-20">

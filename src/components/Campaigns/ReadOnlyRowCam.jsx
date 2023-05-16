@@ -59,18 +59,7 @@ const ReadOnlyRowCam = ({ item,widthDrawFunds,getUserStats,getCampaignFunders,ha
       >
         {("Get Campaign Funders")}
       </button>
-      <button
-        type="button"
-        className="group relative flex
-        cursor-pointer
-        mt-5
-                w-48 justify-center rounded-md border border-transparent bg-secondary
-                 py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => handleCampaign(event, item)}
-      >
-        {("Create Campaign")}
-      </button>
+   
     </td>
   </tr>
   )

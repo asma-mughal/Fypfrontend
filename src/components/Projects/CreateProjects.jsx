@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 const CreateProjects = () => {
-    const { getCategoriesForQuestion, projectStore,userMainId } = useAuth()
+    const { getCategoriesForQuestion, projectStore,userMainId, projectsMessage } = useAuth()
     const [categories, setCategories] = useState();
     const navigate = useNavigate()
     useEffect(()=>{
@@ -48,6 +48,11 @@ const CreateProjects = () => {
        navigate("/")
      }
      },[newtoken?.value])
+     React.useEffect(()=>{
+      if(projectsMessage){
+        navigate("/")
+      }
+     },[projectsMessage])
   return (
     <section class="max-w-4xl p-6 mx-auto bg-nuetral-50 rounded-md font-poppins shadow-md dark:bg-gray-800 mt-20">
     <h1 class="text-xl font-bold text-black capitalize dark:text-white">Create Projects</h1>

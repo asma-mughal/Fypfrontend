@@ -81,13 +81,6 @@ useEffect(()=>{
             phoneRef.current.value,userRef.current.value,addressRef.current.value, value,
             imageUpload, address, walletAddressRef.current.value
             );
-        
-            if(res) {
-             
-            }
-           else {
-            alert('Try Again')
-           }
         }
        catch(error) {
        console.log(error)

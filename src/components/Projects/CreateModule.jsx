@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import DatePicker from 'react-datepicker';
 const CreateModule = () => {
-    const {  projectStore,getAllProjects , projectsRecord, createModule} = useAuth()
-    const [categories, setCategories] = useState();
+    const {  moduleMessage,getAllProjects , projectsRecord, createModule} = useAuth()
     const navigate = useNavigate()
     useEffect(()=>{
         const fetchCategories = async() =>{
@@ -17,7 +16,7 @@ const CreateModule = () => {
         description: "",
         imageUrl: "",
         targetfunds: "",
-        category: "",
+        category: '0',
         startDate:"",
         endDate:""
       });
@@ -47,6 +46,11 @@ const CreateModule = () => {
        navigate("/")
      }
      },[newtoken?.value])
+     React.useEffect(()=>{
+     if(moduleMessage){
+      navigate("/")
+     }
+     },[moduleMessage])
   return (
     <section class="max-w-4xl p-6 mx-auto bg-nuetral-50 rounded-md font-poppins shadow-md dark:bg-gray-800 mt-20">
     <h1 class="text-xl font-bold text-black capitalize dark:text-white">Create Module For Projects</h1>

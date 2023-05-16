@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-const Donate = () => {
-    const {donateFunds,donateMessage} = useAuth();
-    const {navigate} = useNavigate()
+const DonateProjects = () => {
+    const {donateFundsProjects,donateProjectMessage, donateMessage} = useAuth();
+    const navigate = useNavigate()
     const [formValues, setFormValues] = useState({
         targetfunds: "",
       });
@@ -14,7 +14,7 @@ const Donate = () => {
     
       const handleSubmit = (event) => {
         event.preventDefault();
-        donateFunds(formValues)
+        donateFundsProjects(formValues)
         setFormValues({
             ...formValues,
             targetfunds: "",
@@ -28,10 +28,10 @@ const Donate = () => {
      }
      },[newtoken?.value])
      React.useEffect(()=>{
-      if(donateMessage){
+      if(donateProjectMessage){
         navigate("/")
       }
-     },[donateMessage])
+     },[donateProjectMessage])
   return (
     <section class="max-w-4xl p-6 mx-auto bg-nuetral-50 rounded-md font-poppins shadow-md dark:bg-gray-800 mt-20">
     <h1 class="text-xl font-bold text-black capitalize dark:text-white">Donate Here</h1>
@@ -64,4 +64,4 @@ const Donate = () => {
   )
 }
 
-export default Donate
+export default DonateProjects

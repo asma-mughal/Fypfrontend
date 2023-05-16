@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ReadOnlyProj = ({item,widthDrawFunds,getUserStats,getCampaignFunders,handleCampaign}) => {
+const ReadOnlyProj = ({item,withdDrawProjectFunds,getUserStatsProject,handleModules,createModule}) => {
   return (
 
     <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
@@ -25,58 +25,38 @@ const ReadOnlyProj = ({item,widthDrawFunds,getUserStats,getCampaignFunders,handl
         cursor-pointer mb-5
                 w-48 justify-center rounded-md border border-transparent bg-secondary
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => widthDrawFunds(event, item)}
+                 hover:text-black hover:border-secondary
+                  "
+        onClick={(event) => createModule(event, item)}
       >
-        {("Show Modules")}
+        {("Create Module")}
       </button>
-      <button
+    <button
         type="button"
         className="group relative flex
-        cursor-pointer
+        cursor-pointer mb-5
                 w-48 justify-center rounded-md border border-transparent bg-secondary
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
                  hover:text-black hover:border-secondary"
-        onClick={(event) => widthDrawFunds(event, item)}
+        onClick={(event) => handleModules(event, item?.projectId)}
       >
-        {("WithDraw Funds")}
+        {("Show Modules")}
       </button>
+    
       <button
         type="button"
         className="group relative flex
-        cursor-pointer mt-5
+        cursor-pointer 
                 w-48 justify-center rounded-md border border-transparent bg-secondary
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
                  hover:text-black hover:border-secondary
                   "
-        onClick={(event) => getUserStats(event, item)}
+        onClick={(event) => getUserStatsProject(event, item)}
       >
         {("Get User Stats")}
       </button>
-      <button
-        type="button"
-        className="group relative flex
-        cursor-pointer
-        mt-5
-                w-48 justify-center rounded-md border border-transparent bg-secondary
-                 py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => getCampaignFunders(event, item)}
-      >
-        {("Get Campaign Funders")}
-      </button>
-      <button
-        type="button"
-        className="group relative flex
-        cursor-pointer
-        mt-5
-                w-48 justify-center rounded-md border border-transparent bg-secondary
-                 py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => handleCampaign(event, item)}
-      >
-        {("Create Campaign")}
-      </button>
+     
+     
     </td>
   </tr>
   )

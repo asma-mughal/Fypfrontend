@@ -8,7 +8,7 @@ const ShowFunders = () => {
     <div class="bg-white flex border-r-amber-400 rounded-lg font-poppins justify-center items-center overflow-hidden shadow-lg">
     <div class="px-6 py-4">
       <h2 class="text-lg font-bold mb-2">List of Funders</h2>
-      {!funders && <p>No funders here</p> }
+      {funders?.length===0 && <p>No funders here</p> }
       <ul>
         {funders?.map((i)=>{
           return (

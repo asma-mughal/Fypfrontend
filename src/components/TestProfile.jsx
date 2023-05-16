@@ -10,7 +10,10 @@ import ShowFunders from './Campaigns/showFunders';
 import ReadOnlyProj from './Projects/ReadOnlyProj';
 const TestProfile = () => {
     const {getUser,updateFullUser,logout,getOneCampaign,myCampaign,
-      getUserStat,getCampaignFunder,withDrawFunds,projectsRecord, getAllProjects} = useAuth()
+      getUserStat,getCampaignFunder,withDrawFunds,projectsRecord, getAllProjects, getOneCampaignUser,
+      userCampaigns,userProjects,
+      getUserProjects
+    ,getUserProjectStat} = useAuth()
 const [userMainData, setUserMainData] = useState({})
 const [error, setError] = useState('')
 const [userId, setUserId] = useState(null);
@@ -18,9 +21,11 @@ const navigate = useNavigate();
   useEffect(()=>{
 const fetchData = async() =>{
  const data = await getUser();
- getOneCampaign()
- getAllProjects()
+
+                getOneCampaignUser()
+ getAllProjects(userId)
  setUserMainData(data)
+ getUserProjects()
 }
 fetchData()
 },[])
@@ -106,10 +111,24 @@ const getCampaignFunders = (e, item) =>{
   getCampaignFunder(item.campaignId)
   navigate("/showFundCamp")
 }
+const handleModules =(e, i) =>{
+  localStorage.setItem("prjId", i)
+  navigate("/myModules")
+  }
+  const withdDrawProjectFunds = (e) =>{
+  }
+  const getUserStatsProject = (e) =>{
+    getUserProjectStat()
+    navigate("/projectStats")
+  }
+  const createModule = (e) =>{
+    navigate("/createModule")
+  }
+  
 const token = localStorage.getItem("token")
 const newtoken = JSON.parse(token)
 useEffect(()=>{
-  if(!newtoken.value){
+  if(!newtoken?.value){
     navigate("/")
   }
 },[newtoken?.value])
@@ -183,7 +202,7 @@ useEffect(()=>{
         </thead>
         <tbody>
          <Fragment>
-            {userId === userMainData._id ? (    
+            {userId === userMainData?._id ? (    
             <EditableRow
                   item={userMainData}
                     editFormData={editFormData}
@@ -215,7 +234,7 @@ useEffect(()=>{
         <div className="text-xl font-bold mb-4">My Campaigns</div>
         <form onSubmit={""} className="">
     <div class="overflow-x-auto relative ">
-    <table 
+      {userCampaigns?.length ===0 ? <p>No Campaign to Show</p>: <table 
     
     className="w-full text-sm text-left 
     text-gray-500 dark:text-gray-400 
@@ -256,7 +275,6 @@ useEffect(()=>{
               widthDrawFunds={widthDrawFunds}
               getUserStats={getUserStats}
               getCampaignFunders={getCampaignFunders}
-              handleCampaign={handleCampaign}
             />
             )
           })}
@@ -269,7 +287,8 @@ useEffect(()=>{
            
             
         </tbody>
-    </table>
+    </table>}
+    
       </div>
       </form>
    
@@ -278,7 +297,7 @@ useEffect(()=>{
         <div className="text-xl font-bold mb-4">My Projects</div>
         <form onSubmit={""} className="">
     <div class="overflow-x-auto relative ">
-    <table class="min-w-full divide-y divide-gray-200">
+      {userProjects?.length ===0 ? <p>No Projects to show</p> :   <table class="min-w-full divide-y divide-gray-200">
   <thead>
     <tr>
       <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -306,7 +325,7 @@ useEffect(()=>{
   </thead>
   <tbody class="bg-white divide-y divide-gray-200">
   <Fragment>
-          {projectsRecord?.map((item)=>{
+          {userProjects?.map((item)=>{
             return (
               <ReadOnlyProj
               key={item?.projectId}
@@ -314,13 +333,17 @@ useEffect(()=>{
               widthDrawFunds={widthDrawFunds}
               getUserStats={getUserStats}
               getCampaignFunders={getCampaignFunders}
-              handleCampaign={handleCampaign}
+              handleModules={handleModules}
+              withdDrawProjectFunds={withdDrawProjectFunds}
+              getUserStatsProject={getUserStatsProject}
+              createModule={createModule}
             />
             )
           })}
            </Fragment>
   </tbody>
-</table>
+</table>  }
+  
       </div>
       </form>
    
