@@ -1,6 +1,7 @@
 import React from 'react'
 
 const ReadOnlyRow = ({ item, handleEditClick, handleLogout ,handlePassword,handleCampaign,handleProjects}) => {
+
   return (
     <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
     <th

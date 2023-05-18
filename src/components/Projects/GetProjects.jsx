@@ -2,13 +2,15 @@ import React, {useState, useEffect} from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 const GetProjects = () => {
-  const {getAllProjects, projectsRecord} = useAuth()
+  const {allGoing, getAllProjects,getOneProject} = useAuth()
   const navigate = useNavigate();
 useEffect(()=>{
   getAllProjects()
-},[projectsRecord])
+  
+},[allGoing])
 const handleDonate =(e, i) =>{
 localStorage.setItem("prjId", i)
+getOneProject(i)
 navigate("/getModules")
 }
   return (
@@ -22,7 +24,7 @@ navigate("/getModules")
           Projects<span className='text-secondary'>.</span> </h1>
         
   <ul class="cards font-poppins">
-    {projectsRecord  && projectsRecord?.map((i)=>{
+    {allGoing  && allGoing?.map((i)=>{
       return (
         <li class="cards_item" key={i?.projectId}>
         <div class="card">

@@ -2,9 +2,9 @@ import React,{useEffect, useState} from 'react'
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 const MyModules = () => {
-  const {getOneProject, projectModules, withDrawProjectFunds} = useAuth()
+  const {getOneProject, projectModules, withDrawProjectFunds,updateModule} = useAuth()
     const navigate = useNavigate();
-    console.log(projectModules)
+    
   useEffect(()=>{
     const id = localStorage.getItem("prjId")
     getOneProject(id)
@@ -12,6 +12,9 @@ const MyModules = () => {
   const handleDonate =(e, i) =>{
     alert("you are withdrawing funds")
     withDrawProjectFunds(i) 
+  }
+  const handleStatus =(e, i) =>{
+    updateModule(i?.moduleId)
   }
   return (
     <div>
@@ -40,15 +43,16 @@ style={{
          <p class="card_text">Raised Funds: {i?.moduleFunds?.raisedFunds} ETH</p>
          <p class="card_text">Remaining Funds: {i?.moduleFunds?.remainingFunds} ETH</p>
          <p class="card_text">Status: {i?.status}</p>
+         
          <button
 class=" py-4  px-7 uppercase
 bg-white text-xs text-black  text-center p-0.5 
  leading-none rounded-full hover:bg-white hover:border-secondary shadow hover:shadow-lg 
 font-bold font-poppins transition transform hover:-translate-y-0.5"
-onClick={(e) => handleDonate(e, i?.moduleId)}
+onClick={(e) =>  i?.status === "Scheduled" ? handleStatus(e, i): handleDonate(e, i?.moduleId) }
 >
   {
-   'WithDraw Funds'
+    i?.status === "Scheduled" ?'Edit Module': 'WithDraw Funds'
   }
 </button>
        </div>

@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 
 const ShowFunders = () => {
   const {funders} = useAuth()
+  console.log(funders)
   return (
     <div class="bg-white flex border-r-amber-400 rounded-lg font-poppins justify-center items-center overflow-hidden shadow-lg">
     <div class="px-6 py-4">

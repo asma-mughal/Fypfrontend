@@ -38,7 +38,7 @@ const MyCampaigns = () => {
      getCampaignFunder(item.campaignId)
     }
     const token = localStorage.getItem("token")
-    const newtoken = JSON.parse(token)
+    const newtoken = JSON?.parse(token)
    React.useEffect(()=>{
    if(!newtoken?.value) {
      navigate("/")

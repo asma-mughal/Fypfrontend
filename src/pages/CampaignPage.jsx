@@ -9,7 +9,7 @@ const CampaignPage = ({campaign}) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token")
   const newToken = JSON.parse(token)
-  const {simpleCampaign} =useAuth()
+  const {simpleCampaign,getOneCampaign} =useAuth()
   const handleDonate = useCallback(async () => {
     const token = localStorage.getItem("token")
     const newtoken = JSON.parse(token)
@@ -53,7 +53,7 @@ const CampaignPage = ({campaign}) => {
     <div class="relative">
       <div class="w-48 h-48 mx-auto 
        shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center ">
-<img src={"https://images.pexels.com/photos/157520/pexels-photo-157520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"} className=" h-48 w-48 rounded-lg"/>
+<img src={'https://images.pexels.com/photos/157520/pexels-photo-157520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'} className=" h-48 w-48 rounded-lg"/>
       </div>
     </div>
 
@@ -119,7 +119,7 @@ const CampaignPage = ({campaign}) => {
   bg-secondary text-xs text-white text-center p-0.5 
     leading-none rounded-full hover:bg-secondary shadow hover:shadow-lg 
    font-bold font-poppins transition transform hover:-translate-y-0.5"
-   onClick={()=>navigate("/chat")}
+   onClick={()=>navigate("/testChat")}
 >
   Chat
 </button>

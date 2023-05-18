@@ -16,6 +16,7 @@ const SuccessStory = () => {
        useEffect(()=>{
         getAllStories()
        },[successStories])
+       
   return (
   <>
 
@@ -33,7 +34,7 @@ const SuccessStory = () => {
     {successStories  && successStories?.map((i)=>{
       return (
         <li class="cards_item" key={i?._id}>
-        <div class="card">
+        <div class="card ">
           <div class="card_image">
             <img 
             className=''

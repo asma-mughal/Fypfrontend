@@ -6,6 +6,7 @@ import Bot from '../components/Bot';
 import { GoogleLogout } from 'react-google-login';
 import SuccessStory from '../components/SuccessStory';
 import GetProjects from '../components/Projects/GetProjects';
+import ShowProject from '../components/ProjectsIdea/ShowProject';
 const Dashboard = ({campaign,setCampaign}) => {
   const [click, setClick] = useState(false)
   const [color, setColor] = useState(false);
@@ -18,6 +19,7 @@ const Dashboard = ({campaign,setCampaign}) => {
 
         <Projects campaign={campaign} setCampaign={setCampaign} />
         <GetProjects campaign={campaign} setCampaign={setCampaign} />
+        <ShowProject />
         <SuccessStory campaign={campaign} setCampaign={setCampaign} />
     <div className={`bg-primary `}>
       <div className={``}>

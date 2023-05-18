@@ -12,7 +12,7 @@ const CreateCampaign = () => {
          setCategories(data)
         }
          fetchCategories()
-      },[])
+      },[categories])
       const [formValues, setFormValues] = useState({
         title: "",
         description: "",
@@ -20,6 +20,7 @@ const CreateCampaign = () => {
         deadline: "",
         targetfunds: "",
         category: "0",
+        startDate:""
       });
       const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -28,6 +29,7 @@ const CreateCampaign = () => {
     
       const handleSubmit = (event) => {
         event.preventDefault();
+        console.log(formValues)
         campignStore(formValues)
         setFormValues({
             ...formValues,
@@ -37,6 +39,7 @@ const CreateCampaign = () => {
             deadline: "",
             targetfunds: "",
             category: "",
+            startDate:""
         })
       };
       const handleImageChange = (event) => {
@@ -97,7 +100,16 @@ const CreateCampaign = () => {
                 </select>
             </div>
             <div>
-                <label class="text-black dark:text-gray-200" for="passwordConfirmation">Deadline</label>
+                <label class="text-black dark:text-gray-200" for="passwordConfirmation">Start Date</label>
+                <input type="date" 
+                  id="deadline"
+                  name="startDate"
+                  value={formValues.startDate}
+                  onChange={handleInputChange}
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+            </div>
+            <div>
+                <label class="text-black dark:text-gray-200" for="passwordConfirmation">End Date</label>
                 <input type="date" 
                   id="deadline"
                   name="deadline"
@@ -105,6 +117,7 @@ const CreateCampaign = () => {
                   onChange={handleInputChange}
                 class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
             </div>
+           
             <div>
                 <label class="text-black dark:text-gray-200" 
                 

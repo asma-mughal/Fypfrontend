@@ -1,6 +1,6 @@
 
 import { Avatar } from "@material-ui/core";
-import React from "react";
+import React,{useEffect} from "react";
 import "./css/AllQuestions.css";
 import { Link, useNavigate} from "react-router-dom";
 import { questions } from "../../../constants/constants";
@@ -9,9 +9,8 @@ import { useState } from "react";
 import dateFormat from 'dateformat';
 const AllQuestion = ({question,setQuestion}) => {
   const navigate = useNavigate();
-  const {getAllQuestion,getUser,searchedQuestion,questionList, setQuestionList} = useAuth()
-
-  const [user, setUser] = useState({})
+  const {getAllQuestion,getUser,searchedQuestion,questionList, setQuestionList,getUserId,userQuestionName} = useAuth()
+  
  const handleClick = (i) =>{
  const questionId = localStorage.setItem("questionId",JSON.stringify(i._id))
  navigate("/view")
@@ -19,11 +18,47 @@ const AllQuestion = ({question,setQuestion}) => {
  React.useEffect(()=>{
   const fetchData = async() =>{
     const data = await   getAllQuestion();
-   
+    
   }
   fetchData()
 
  },[])
+ const [user, setUser] = useState(null)
+
+const fetchUser = async (userId) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/api/user/${userId}`);
+
+    if (response.ok) {
+      const userData = await response.json();
+      return userData?.data;
+    } else {
+      console.error('Failed to fetch user data');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error while fetching user data', error);
+    return null;
+  }
+};
+
+const fetchUsers = async () => {
+  const updatedQuestionList = await Promise.all(
+    questionList?.map(async (question) => {
+      const user = await fetchUser(question?.user_id);
+      return { ...question, user };
+    })
+  );
+  setQuestionList(updatedQuestionList);
+  setUser(updatedQuestionList)
+};
+
+useEffect(() => {
+
+  fetchUsers();
+}, []);
+
+
  const token = localStorage.getItem("token")
  const newtoken = JSON.parse(token)
 React.useEffect(()=>{
@@ -31,6 +66,7 @@ if(!newtoken?.value) {
   navigate("/")
 }
 },[newtoken?.value])
+// question.user_id
   return (
     <div className="all-questions font-poppins">
       <div className="all-questions-container">
@@ -47,6 +83,7 @@ if(!newtoken?.value) {
         </div>
       <div className="question-answer">
         {questionList?.filter((val)=>{
+        
          if(searchedQuestion === ""){
           return val
          }
@@ -54,7 +91,6 @@ if(!newtoken?.value) {
           return val
          }
         }).map((i)=>{
-      
           return(<div>
               <div className="question-answer">
           <div  className=" text-black font-bold
@@ -99,9 +135,14 @@ if(!newtoken?.value) {
             <small>{dateFormat((i.createdAt), "mmmm dS, yyyy")} hrs</small>
             <div className="auth-details">
               <Avatar />
-              <p>
-              {user.username}
-              </p>
+              {user?.map((ques)=>{
+                return (
+                  <p>
+                  {ques?.user?._id === i.user_id &&   ques?.user?.name }
+                  </p>
+                )
+              })}
+            
             </div>
           </div>
         </div>

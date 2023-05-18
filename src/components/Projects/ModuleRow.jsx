@@ -1,14 +1,6 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-const ReadOnlyRowCam = ({ item,widthDrawFunds,getUserStats,getCampaignFunders,handleCampaign}) => {
-  const token = localStorage.getItem("token")
-  const newtoken = JSON.parse(token)
- React.useEffect(()=>{
- if(!newtoken?.value) {
-   navigate("/")
- }
- },[newtoken?.value])
 
+const ModuleRow = ({item,withdDrawProjectFunds,getUserStatsProject,handleModules,createModule}) => {
   return (
     <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
     <th
@@ -20,49 +12,54 @@ const ReadOnlyRowCam = ({ item,widthDrawFunds,getUserStats,getCampaignFunders,ha
       {item?.title}
     </th>
     <td class="">{(item?.description)}</td>
-    <td class="py-4 px-6 text-center">{(item?.raisedFunds)}</td>
-    <td class="py-4 px-6 text-center">{(item?.remainingFunds)}</td>
-    <td class="py-4 px-6 text-center">{(item?.status)}</td>
+    <td class="py-4 px-6 text-center">{(item?.projectFunds?.targetFunds)}</td>
+    <td class="py-4 px-6 text-center">{(item?.projectFunds?.raisedFunds)}</td>
+    <td class="py-4 px-6 text-center">{(item?.projectFunds?.remainingFunds)}</td>
+    <td class="py-4 px-6 text-center">{(item?.imageUrl)}</td>
+     
     <td class="py-4 px-6  flex flex-col justify-center items-center">
-      <button
+    <button
         type="button"
         className="group relative flex
-        cursor-pointer
-                w-48 justify-center rounded-md border border-transparent bg-secondary
-                 py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => widthDrawFunds(event, item)}
-      >
-        {("WithDraw Funds")}
-      </button>
-      <button
-        type="button"
-        className="group relative flex
-        cursor-pointer mt-5
+        cursor-pointer mb-5
                 w-48 justify-center rounded-md border border-transparent bg-secondary
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
                  hover:text-black hover:border-secondary
                   "
-        onClick={(event) => getUserStats(event, item)}
+        onClick={(event) => handleModules(event, item)}
+      >
+        {("Get Modules")}
+      </button>
+    <button
+        type="button"
+        className="group relative flex
+        cursor-pointer mb-5
+                w-48 justify-center rounded-md border border-transparent bg-secondary
+                 py-1 px-2 text-sm font-medium text-white hover:bg-white
+                 hover:text-black hover:border-secondary
+                  "
+        onClick={(event) => getUserStatsProject(event, item)}
       >
         {("Get User Stats")}
       </button>
       <button
         type="button"
         className="group relative flex
-        cursor-pointer
-        mt-5
+        cursor-pointer mb-5
                 w-48 justify-center rounded-md border border-transparent bg-secondary
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
-                 hover:text-black hover:border-secondary"
-        onClick={(event) => getCampaignFunders(event, item)}
+                 hover:text-black hover:border-secondary
+                  "
+        onClick={(event) => withdDrawProjectFunds(event, item)}
       >
-        {("Get Campaign Funders")}
+        {("WithDraw Funds")}
       </button>
-   
+      
+      
+     
     </td>
   </tr>
   )
 }
 
-export default ReadOnlyRowCam
+export default ModuleRow

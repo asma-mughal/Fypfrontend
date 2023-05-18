@@ -3,8 +3,15 @@ import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 import { Line } from "react-chartjs-2";
 import { useAuth } from '../../contexts/AuthContext';
+import { useEffect } from 'react';
 const UserStats = () => {
-  const {stats} = useAuth()
+ 
+  const {stats,getUserStat} = useAuth()
+  console.log(stats)
+  useEffect(()=>{
+    const Id =   localStorage.getItem("userStats")
+    getUserStat(Id)
+    },[stats])
   const data = {
     labels: stats ? stats.map((stat) => stat.timestamp) : [],
     datasets: [
@@ -27,24 +34,24 @@ const UserStats = () => {
 
   const options = {
     scales: {
-      xAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Time (Days)",
-          },
+      x: {
+        display: true,
+        title: {
+          display: true,
+          text: "Timestamp",
         },
-      ],
-      yAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Money (USD)",
-          },
+      },
+      y: {
+        display: true,
+        title: {
+          display: true,
+          text: "Amount",
         },
-      ],
+      },
     },
   };
+
+ 
 
 
  

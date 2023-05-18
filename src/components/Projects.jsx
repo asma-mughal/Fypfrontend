@@ -57,7 +57,7 @@ const Projects = ({campaign,setCampaign}) => {
     >
       
       {campaignsRecord?.map((i)=>{
-         const record = convertSeconds(i.deadline);
+         const record = convertSeconds(i?.deadline);
         return(
           <div class="grid grid-cols-1 sm:grid-cols-1
            md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-5 bg-white">
@@ -102,7 +102,7 @@ const Projects = ({campaign,setCampaign}) => {
   </div>
  
   <div className='text-transparent'>
-    {i?.userId === mainId &&
+    {!(i?.userId === mainId) &&
     <button 
             onClick= {(e)=>{handleClick(e, i?.campaignId)}}
             class="bg-secondary border-secondary w-full font-poppins rounded-3xl border p-2

@@ -57,32 +57,8 @@ const SignIn  = () => {
         localStorage.setItem("socialLogin", JSON.stringify(testSocialLogin))
       }
     }
-    const [accounts, setAccounts] = useState([]);
 
-    // Function to handle the button click
-    async function handleClick() {
-      if (window.ethereum) {
-        try {
-          // Request access to the user's accounts
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setAccounts(accounts);
-          localStorage.setItem("userAddress", accounts)
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    }
-    async function switchAccount(index) {
-      if (window.ethereum) {
-        try {
-          // Switch to the selected account
-          await window.ethereum.request({ method: 'eth_accounts', params: [index] });
-          setAccounts(await window.ethereum.request({ method: 'eth_accounts' }));
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    }
+
   return (
    <>
    <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -172,42 +148,16 @@ const SignIn  = () => {
               </Button>
             </div>
           </form>
-          <div className="flex items-center justify-between">
+          { <div className="flex items-center justify-between">
               <div className="flex items-center">
               <p className='font-poppins'>Don't have an account? </p>
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 ">
                 <Link to="/signup"><text className='font-poppins text-secondary font-bold'>Register Here</text></Link>
                 </label>
               </div>
-            </div>
-            <div class="seperator"><b>or</b>
-            
-            </div>
-            <FacebookLogin
-    appId="1057176008302177"
-    autoLoad={false}
-    cssClass="my-facebook-button-class font-poppins "
-    fields="name,email,picture"
-    callback={responseFacebook} />
-    
-    <button className='bg-white  shadow-lg border-0 rounded-none font-poppins  '
-    style={{
-      backgroundColor:'#C94130',
-      width: '100%',
-  height: '3rem',
-marginTop:'2%',
-borderRadius:'3rem',
-borderWidth: '2px'
-    }}
-    
-    >   <a href="#" class="btn text-white"
-        
-        
-    onClick={handleGoogleSignIn}><i class="fa fa-google fa-fw "
-    >
-      </i> Login with Google
-    </a>
-        </button>
+            </div> }
+     
+         
         </div>
       </div>
    </>

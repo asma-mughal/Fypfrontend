@@ -54,12 +54,20 @@ export function AuthProvider({children}) {
     const [projectStats, setProjectStats] = useState();
     const [userCampaigns, setUserCampaign] = useState();
     const [userProjects, setUserProjects] = useState();
+    const [pitchedProjects, setPitchedProject] = useState();
+    const [startedProject, setStartedProject] = useState();
+    const [onGoingProjects , setOnGoingProjects] = useState();
+    const [createProjMessage, setCreateProj] = useState(false);
+    const [userQuestionName, setUserQuestionName] = useState();
+    const [allPitched, setAllPitched] = useState();
+    const [allStarted, setAllStarted] = useState();
+    const [allGoing, setAllGoing] = useState();
     const chatUrl ="http://localhost:3001";
     const url ="http://localhost:5000"
     const secondUrl = "http://localhost:3000";
     function signup(email,password,phone,user,address, value, calendar,imageUpload, addr, walletAddress) {
-     //console.log(user, email, password, phone, address, value, calendar, imageUpload, addr)
-     //setRegistermsg(email)
+    console.log(walletAddress)
+     localStorage.setItem("username", user)
      fetch(`${url}/api/auth/signup`, {
         method: 'POST',  
         
@@ -69,11 +77,12 @@ export function AuthProvider({children}) {
         },
         body: JSON.stringify({
           username: user, 
-          name:"abc",
+          name:user,
           email: email,
           address:address,
           phonenumber:phone,
           password:password,
+          wallet_address:addr
         // //   user_type:'_',
         // //   device_token:'_',
         // //   role:'user',
@@ -89,11 +98,10 @@ export function AuthProvider({children}) {
                 "POST Response",
                 "Response Body -> " + JSON.stringify(responseData) + 
                 
-                alert(responseData.message)  +
-                  localStorage.setItem("username", JSON.stringify(user)) + 
+                alert(responseData.message)  + 
                   setSignUpText(responseData.statusText)+
                   localStorage.setItem("emailOtp" , JSON.stringify(responseData.data.email))
-            )//signupChat(email, password,user) +
+            ) +signupChat(email, password,user) 
         })
         .catch(error => console.log(error.toString()))
           return success;
@@ -135,7 +143,19 @@ export function AuthProvider({children}) {
   //const data = await response.json()
   //console.log(data)
     }
+    const getUserId  = async(id) =>{
+    const response =  await axios.get(`${url}/api/user/${id}`);
+    return (response?.data?.data);
+ 
+      }
+      const getAllUser  = async(id) =>{
+        const response =  await axios.get(`${url}/api/user`);
+       return (response?.data);
+     
+          }
+      ///api/auth/signinDb
     function login(email,password) {
+        const user = localStorage.getItem("username")
       fetch(`${url}/api/auth/signin`, {
         method: 'POST',
         headers: {
@@ -157,15 +177,14 @@ export function AuthProvider({children}) {
                 alert(responseData.message)
                 +setLoginMsg(responseData.statusText)
                  + tokenSetting(responseData?.data?.token)
-                
-            )// +loginChat(password)
+                 +loginChat(user,password)
+            ) 
         })
         .catch(error => console.log(error.toString()))
        
     }
-    function loginChat(password) {
-        const user = localStorage.getItem("username")
-        const userName = JSON.parse(user)
+    function loginChat(username, password) {
+       
         fetch(`${chatUrl}/login`, {
           method: 'POST',
           headers: {
@@ -173,7 +192,7 @@ export function AuthProvider({children}) {
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username:userName, 
+            username:username, 
             secret:password
           })
       })
@@ -188,6 +207,35 @@ export function AuthProvider({children}) {
           .catch(error => console.log(error.toString()))
          
       }
+      function loginDb(email) {
+        console.log(email)
+        //${url}/api/auth/signinDb
+      fetch(`${url}/api/auth/signinDb`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+        })
+    })
+        .then((response) => response.json())
+        .then((responseData) => {
+            console.log(
+                "POST Response",
+                "Response Body -> " + 
+                JSON.stringify(responseData) 
+                // +localStorage.setItem("mainUser",JSON.stringify(responseData.data.user))+
+                // alert(responseData.message)
+                // +setLoginMsg(responseData.statusText)
+                //  + tokenSetting(responseData?.data?.token)
+                 //+loginChat(user,password)
+            ) 
+        })
+        .catch(error => console.log(error.toString()))
+       
+    }
     function logout() {
         localStorage.removeItem("username")
         localStorage.removeItem("emailOtp")
@@ -213,7 +261,8 @@ export function AuthProvider({children}) {
             .then((responseData) => {
                 console.log(
                     "POST Response",
-                    "Response Body -> "+ JSON.stringify(responseData)   +setOtpText(responseData.message) 
+                    "Response Body -> "+ JSON.stringify(responseData) 
+                      +setOtpText(responseData.message) 
                     +alert(responseData.message)             
                 )
             })
@@ -369,7 +418,6 @@ export function AuthProvider({children}) {
     async function  DatabaseSoicalLogin(type, response) {
         console.log(type,response)
         const socialData = localStorage.getItem("socialData");
-        console.log(socialData)
         if(!testSocialLogin && socialData){
             if(response){
                 fetch(`${url}/api/auth/signup`, {
@@ -400,12 +448,12 @@ export function AuthProvider({children}) {
                              localStorage.setItem("socialData",JSON.stringify(responseData.data.user))
                         )
                     })
-                    .catch(error => console.log(error.toString()))
+                    .catch(error => console.log(error?.toString()))
             }
         }
     
        else {
-        console.log("already entered record")
+        loginDb(response?.email)
        }
         
     }
@@ -508,7 +556,8 @@ export function AuthProvider({children}) {
        //Stories
         const getAllStories  = async() =>{
             const response =  await axios.get(`${secondUrl}/success-stories/get-all-stories`);
-            setSuccessStories(response.data.result)
+            //console.log(response.data.stories)
+        setSuccessStories(response.data.stories)
               }
         //Campaigns    
         function campignStore(formValues) {
@@ -516,15 +565,21 @@ export function AuthProvider({children}) {
             const newUser = (JSON.parse(user))
             const address =   localStorage.getItem("userAddress");
             const seconds = calculateDeadline(formValues.deadline)
+            const startDate = calculateDeadline(formValues.startDate);
             const payload = {
-                userId: newUser?._id,
-                    title:formValues.title,
-                    description:formValues.description,
+              
+              userId: newUser?._id,
+              title:formValues.title,
+              description:formValues.description,
                     categoryId:formValues.category,
                     deadline:seconds,
-                    creator:"0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14",
-                    targetFunds:formValues.targetfunds
+                    creator:newUser?.wallet_address,
+                    targetFunds:formValues.targetfunds,
+                    startTimestamp:deadline,
+                    imageUrl:""
               };
+              console.log(payload)
+              //${secondUrl}/campaign/create-campaign
               axios.post(`${secondUrl}/campaign/create-campaign`, payload)
                 .then(response => {
                 setCampaignSuccess(response.data.success)
@@ -593,7 +648,6 @@ export function AuthProvider({children}) {
                   };
                   axios.post(`${secondUrl}/campaign/get-campaigns`, payload)
                     .then(response => {
-                      
                         //setMyCampaign(response.data)
                     setUserCampaign(response.data.campaigns)
                      //setAnsList(response.data.data);
@@ -605,7 +659,6 @@ export function AuthProvider({children}) {
                     
             }
             const donateFunds = (amount) =>{
-                const address = localStorage.getItem("userAddress")
                 const user = localStorage.getItem("mainUser")
                 const newUser = (JSON.parse(user))
                 const userId = (newUser._id)
@@ -618,7 +671,7 @@ export function AuthProvider({children}) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        userAddress:address,
+                        userAddress:newUser?.wallet_address,
                         amount: amount.targetfunds,
                         campaignId: campaignId,
                         userId:userId
@@ -650,7 +703,7 @@ export function AuthProvider({children}) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ownerAddress:"0x8CabBd1D5fD70B2000EA5A15c9257add31444442",
+                        ownerAddress:newUser?.wallet_address,
                         campaignId: cmpId,
                         userId:userId
                     })
@@ -691,6 +744,7 @@ export function AuthProvider({children}) {
                   //${secondUrl}/campaign/get-user-stats
                   axios.post(`${secondUrl}/campaign/get-user-stats`, payload)
                     .then(response => {
+                      console.log(response.data)
                      setStats(response.data.stats)
                     })
                     .catch(error => {
@@ -699,27 +753,28 @@ export function AuthProvider({children}) {
             }
 
             /* PROJECTS API */
-
-            function projectStore(formValues) {
+           async  function projectStore(formValues) {
                 const user = localStorage.getItem("mainUser")
                 const newUser = (JSON.parse(user))
                 const address =   localStorage.getItem("userAddress");
+                const projectId = localStorage.getItem("startPrj");
+                const data =  await getUserId(formValues.user);
                 const payload = {
                         userId: newUser?._id,
-                        creator: "0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14", 
-                        title:formValues.title,
-                        description:formValues.description,
-                        categoryId:formValues.category,
-                        imageUrl:formValues.image,
+                        projectId: projectId,
                         targetFunds:formValues.targetfunds,
-                        investerId : "20",
-                        investerAddress:"0x6e370895E76d79FB764e8d25D75036D9b9fe219c"
+                        investerId :data?._id,
+                        investerAddress:data?.wallet_address,
+                        equity:formValues.equity,
+                        userAddress: newUser?.wallet_address, 
                   };
-                  //${secondUrl}/project/create-project
-                  axios.post(`${secondUrl}/project/create-project`, payload)
+                  console.log(payload)
+                  //${secondUrl}/project/start-project
+                  axios.post(`${secondUrl}/project/start-project`, payload)
                     .then(response => {
                         setProjectMessage(response.data.success)
-                    alert(response.data.message); // Handle the response from the server
+                        console.log(response.data)
+                        alert(response.data.message); // Handle the response from the server
                     })
                     .catch(error => {
                       console.log(error); // Handle any errors that occurred during the request
@@ -733,18 +788,42 @@ export function AuthProvider({children}) {
                 const endDate = calculateDeadline(formValues.endDate);
                 const payload = {
                         projectId: formValues.category,
-                        creator: "0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14", 
+                        creator: newUser?.wallet_address, 
                         title:formValues.title,
                         description:formValues.description,
                         startDate:startDate,
                         targetFunds:formValues.targetfunds,
                         endDate:endDate
                   };
-                  
                   //${secondUrl}/project/create-module
+                  
                   axios.post(`${secondUrl}/project/create-module`, payload)
                     .then(response => {
                     setModuleMessage(response.data.success)
+                   
+                    alert(response.data.message); // Handle the response from the server
+                    })
+                    .catch(error => {
+                      console.log(error); // Handle any errors that occurred during the request
+                    });
+               }
+               const updateModule =(mdId) =>{
+                const user = localStorage.getItem("mainUser")
+                const newUser = (JSON.parse(user))
+                const prjid = localStorage.getItem("prjId")
+                const payload = {
+                        userId: newUser?._id,
+                        creator: newUser?.wallet_address, 
+                        moduelId: mdId,
+                        projectId:prjid,
+                        status: 2
+                  };
+                  console.log(payload)
+                  //${secondUrl}/project/update-module
+                  //${secondUrl}/project/update-module
+                  axios.post(``, payload)
+                    .then(response => { 
+                        console.log(response.data)                  
                     alert(response.data.message); // Handle the response from the server
                     })
                     .catch(error => {
@@ -758,23 +837,36 @@ export function AuthProvider({children}) {
                     categoryId:""
                   };
                 const response =  await axios.post(`${secondUrl}/project/get-projects`, payload);
-                setProjectsRecord(response?.data?.projects)
+                const pitchedProjects = response?.data?.projects?.filter(project => project.status === "Pitched");
+                const startedProjects = response?.data?.projects?.filter(project => project.status === "Scheduled");
+                const ongoingProjects = response?.data?.projects?.filter(project => project.status === "Ongoing");
+                setAllPitched(pitchedProjects)
+                setAllStarted(startedProjects)
+                setAllGoing(ongoingProjects)
+                //console.log(response.data.projects)
+                setProjectsRecord(ongoingProjects)
                   }
                   const getUserProjects  = async(id) =>{
-                
                     const payload = {
                         userId:id ,
                         categoryId:""
                       };
                     const response =  await axios.post(`${secondUrl}/project/get-projects`, payload);
-                    //console.log(response.data)
-                   setUserProjects(response?.data?.projects)
+                    //console.log(response.data) 
+                    const pitchedProjects = response?.data?.projects?.filter(project => project.status === "Pitched");
+                   const startedProjects = response?.data?.projects?.filter(project => project.status === "Scheduled");
+                   const ongoingProjects = response?.data?.projects?.filter(project => project.status === "Ongoing");
+                      setPitchedProject(pitchedProjects)
+                      setStartedProject(startedProjects)
+                      setOnGoingProjects(ongoingProjects)
+                      //setUserProjects(response?.data?.projects)
                       }
                   const getOneProject = async(id) =>{
                         const payload = {
                         projectId:id,
                       };
                     const response =  await axios.post(`${secondUrl}/project/get-project`, payload);
+                    //console.log(response.data.project)
                     setProjectModules(response?.data?.project?.modules)
                       }
                       const donateFundsProjects = (amount) =>{
@@ -795,7 +887,7 @@ export function AuthProvider({children}) {
                             body: JSON.stringify({
                                 projectId:projectId,
                                 moduleId:moduleId,
-                                userAddress:"0x78Fa5b48258af47d70673F8d02C8b226dD50dD02",
+                                userAddress:newUser?.wallet_address,
                                 amount: amount.targetfunds,
                                 userId:userId
                             })
@@ -826,7 +918,7 @@ export function AuthProvider({children}) {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
-                                ownerAddress:"0xD13f48CC6E1c4BD51981ff96f7913EA25f632e14",
+                                ownerAddress:newUser?.wallet_address,
                                 projectId:projectId,
                                 moduleId:moduleId,
                                 userId:userId
@@ -860,6 +952,33 @@ export function AuthProvider({children}) {
                               console.log(error);
                             });
                     }
+                    function storeProjectIdea(formValues) {
+                        const user = localStorage.getItem("mainUser")
+                        const newUser = (JSON.parse(user))
+                        const payload = {
+                                userId:newUser?._id,
+                                creator: newUser?.wallet_address, 
+                                title:formValues?.title,
+                                description:formValues.description,
+                                categoryId:formValues.category,
+                                equity:formValues.equity,
+                                imageUrl:"",
+                                targetFunds:formValues.targetfunds,
+                                investerId:"0",
+                                investerAddress:'0x0000000000000000000000000000000000000000'
+                               
+                          };//${secondUrl}/project/create-project
+                          axios.post(`${secondUrl}/project/create-project`, payload)
+                            .then(response => {
+                            console.log(response.data)
+                            setCreateProj(response.data.success)
+                            alert(response.data.message); // Handle the response from the server
+                            })
+                            .catch(error => {
+                              console.log(error); // Handle any errors that occurred during the request
+                            });
+                    }
+                    
         useEffect(()=>{
             //at first it'll check whether the user is signIn or not
         const unsubscribe = onAuthStateChanged(auth, ()=>{
@@ -949,7 +1068,18 @@ export function AuthProvider({children}) {
     projectStats,
     getOneCampaignUser,
     userCampaigns,userProjects,
-    getUserProjects
+    getUserProjects,
+    storeProjectIdea,
+    getUserId,
+    userQuestionName,
+    createProjMessage,
+    pitchedProjects,startedProject,
+    allPitched,
+    allStarted, 
+    onGoingProjects ,
+    updateModule,
+    allGoing,
+    getAllUser
     }
   return (
   <AuthContext.Provider value={value}>

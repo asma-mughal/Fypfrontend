@@ -7,6 +7,7 @@ const GetModules = () => {
   useEffect(()=>{
     const id = localStorage.getItem("prjId")
     getOneProject(id)
+  
   },[])
   const handleDonate =(e, i) =>{
     localStorage.setItem("moduleId" , i)

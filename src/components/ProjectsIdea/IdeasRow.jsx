@@ -1,8 +1,7 @@
 import React from 'react'
 
-const ReadOnlyProj = ({item,withdDrawProjectFunds,getUserStatsProject,handleModules,createModule}) => {
+const IdeasRow = ({item,startProject}) => {
   return (
-
     <tr class="bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
     <th
       scope="row"
@@ -28,17 +27,14 @@ const ReadOnlyProj = ({item,withdDrawProjectFunds,getUserStatsProject,handleModu
                  py-1 px-2 text-sm font-medium text-white hover:bg-white
                  hover:text-black hover:border-secondary
                   "
-        onClick={(event) => createModule(event, item)}
+        onClick={(event) => startProject(event, item)}
       >
-        {("Create Module")}
+        {("Start Project")}
       </button>
-  
-      
-      
-     
+   
     </td>
   </tr>
   )
 }
 
-export default ReadOnlyProj
+export default IdeasRow

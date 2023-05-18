@@ -17,8 +17,8 @@ const StatsProject = () => {
     });
   
     // Extract the labels and data from the contributions map
-    const labels = Object.keys(contributionsMap);
-    const data = Object.values(contributionsMap);
+    const labels = Object?.keys(contributionsMap);
+    const data = Object?.values(contributionsMap);
     const chartData = {
         labels: labels,
         datasets: [

@@ -38,7 +38,31 @@ const MainQuestion = ({question,setQuestion}) => {
     addAnswereToQuestion(wrritten,JSON.parse(qestionId))
     
   }
-
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+   const fetchUser = async (userId) => {
+     try {
+       const response = await fetch(`http://127.0.0.1:5000/api/user/${userId}`); // Replace with your API endpoint
+ 
+       if (response.ok) {
+         const userData = await response.json();
+         setUser(userData?.data);
+       } else {
+         // Handle the error case
+         console.error('Failed to fetch user data');
+       }
+     } catch (error) {
+       // Handle any other errors
+       console.error('Error while fetching user data', error);
+     }
+   };
+ 
+   // Assuming 'i.userId' is the user ID in each question
+   asnwereList?.forEach((i) => {
+     fetchUser(i?.user_id);
+  
+   });
+ }, [asnwereList]);
   useEffect(()=>{
     //getSingleQuestion
     const questionId =JSON.parse(localStorage.getItem("questionId")) 
@@ -76,7 +100,7 @@ const MainQuestion = ({question,setQuestion}) => {
             </div>
             <div className="question-answer">
               
-              <p>{question.Docs}</p>
+              <p>{question?.Docs}</p>
 
               
             </div>
@@ -126,12 +150,12 @@ const MainQuestion = ({question,setQuestion}) => {
          {ans?.answer}
                     <div className="author">
                       <small>
-                        asked
+                        Answered
                       </small>
                       <div className="auth-details">
                         <Avatar />
                         <p>
-                       Username here
+                       {user?.name}
                         </p>
                       </div>
                     </div>

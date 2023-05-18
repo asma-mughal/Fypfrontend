@@ -34,6 +34,7 @@ const Signup = () => {
     const [error,setError] = useState('');
     const [loading,setLoading] = useState(false);
     const [address, setAddress] = useState('');
+
 const [coordinates, setCoordinates] = useState({
     longitude:'',
     latitude:''

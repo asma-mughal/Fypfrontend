@@ -8,24 +8,28 @@ import ReadOnlyRowCam from './Campaigns/ReadOnlyRowCam';
 import UserStats from './Campaigns/UserStats';
 import ShowFunders from './Campaigns/showFunders';
 import ReadOnlyProj from './Projects/ReadOnlyProj';
+import IdeasRow from './ProjectsIdea/IdeasRow';
+import ModuleRow from './Projects/ModuleRow';
 const TestProfile = () => {
     const {getUser,updateFullUser,logout,getOneCampaign,myCampaign,
       getUserStat,getCampaignFunder,withDrawFunds,projectsRecord, getAllProjects, getOneCampaignUser,
       userCampaigns,userProjects,
-      getUserProjects
-    ,getUserProjectStat} = useAuth()
+      getUserProjects,startedProject
+    ,getUserProjectStat,getUserId,pitchedProjects,onGoingProjects} = useAuth()
 const [userMainData, setUserMainData] = useState({})
+const user = localStorage.getItem("mainUser")
+const newUser = (JSON.parse(user))
 const [error, setError] = useState('')
 const [userId, setUserId] = useState(null);
 const navigate = useNavigate();
   useEffect(()=>{
 const fetchData = async() =>{
- const data = await getUser();
-
-                getOneCampaignUser()
+ const data = await  getUserId( newUser?._id);
+getOneCampaignUser()
  getAllProjects(userId)
  setUserMainData(data)
- getUserProjects()
+ getUserProjects(newUser?._id)
+
 }
 fetchData()
 },[])
@@ -44,16 +48,17 @@ const editedContact = {
   phone_number:editFormData.phone_number,
   address:editFormData.address
 };
+console.log(editedContact)
 updateFullUser(editedContact)
 setUserId(null)
-getUser()
+getUserId(newUser?._id);
 };
 const handleEditClick = (event, contact) => {
 console.log(contact)
 event.preventDefault();
  setUserId(contact._id)
  const formValues = {
-    username:contact.username,
+    username:contact.name,
     email:contact.email,
     phone_number : contact.phone_number,
     address: contact.address
@@ -92,7 +97,7 @@ const handleCampaign = (e) =>{
 
 const handleProjects= (e) =>{
   e.preventDefault()
-  navigate('/createProject')
+  navigate('/ideaProject')
 
 }
 
@@ -100,9 +105,14 @@ const widthDrawFunds =(e, item) =>{
   alert("You are withdrawing Funds")
   withDrawFunds(item?.campaignId)
 }
-
+const startProject=(e, item) =>{
+e.preventDefault();
+const projectId = localStorage.setItem("startPrj", item.projectId);
+navigate("/createProject")
+}
 const getUserStats = (e, item) =>{
   e.preventDefault();
+  localStorage.setItem("userStats", item?.campaignId)
   getUserStat(item?.campaignId)
   navigate("/showStatsCamp")
 }
@@ -112,7 +122,8 @@ const getCampaignFunders = (e, item) =>{
   navigate("/showFundCamp")
 }
 const handleModules =(e, i) =>{
-  localStorage.setItem("prjId", i)
+  localStorage.setItem("prjId", i?.projectId)
+  //console.log(i)
   navigate("/myModules")
   }
   const withdDrawProjectFunds = (e) =>{
@@ -257,8 +268,9 @@ useEffect(()=>{
                 </th>
                 <th scope="col" className="py-3 px-6 text-center"
                 >
-                {("Images")}
+                {("Status")}
                 </th>
+                
                 <th scope="col" className="py-3 px-6 text-center"
                 >
                 {"Actions"}
@@ -267,7 +279,7 @@ useEffect(()=>{
         </thead>
         <tbody>
          <Fragment>
-          {myCampaign?.map((item)=>{
+          {userCampaigns?.map((item)=>{
             return (
               <ReadOnlyRowCam
               key={item?.campaignId}
@@ -294,7 +306,7 @@ useEffect(()=>{
    
   </div> 
   <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
-        <div className="text-xl font-bold mb-4">My Projects</div>
+        <div className="text-xl font-bold mb-4">My Ideas</div>
         <form onSubmit={""} className="">
     <div class="overflow-x-auto relative ">
       {userProjects?.length ===0 ? <p>No Projects to show</p> :   <table class="min-w-full divide-y divide-gray-200">
@@ -325,17 +337,60 @@ useEffect(()=>{
   </thead>
   <tbody class="bg-white divide-y divide-gray-200">
   <Fragment>
-          {userProjects?.map((item)=>{
+          {pitchedProjects?.map((item)=>{
+            return (
+              <IdeasRow
+              key={item?.projectId}
+              item={item}
+              startProject={startProject}
+            />
+            )
+          })}
+           </Fragment>
+  </tbody>
+</table>  }
+  
+      </div>
+      </form>
+   
+  </div>
+  <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
+        <div className="text-xl font-bold mb-4">Projects Scheduled</div>
+        <form onSubmit={""} className="">
+    <div class="overflow-x-auto relative ">
+      {userProjects?.length ===0 ? <p>No Projects to show</p> :   <table class="min-w-full divide-y divide-gray-200">
+  <thead>
+    <tr>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Title
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Description
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Target Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Raised Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Remaining Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Images
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+  <Fragment>
+          {startedProject?.map((item)=>{
             return (
               <ReadOnlyProj
               key={item?.projectId}
               item={item}
-              widthDrawFunds={widthDrawFunds}
-              getUserStats={getUserStats}
-              getCampaignFunders={getCampaignFunders}
-              handleModules={handleModules}
-              withdDrawProjectFunds={withdDrawProjectFunds}
-              getUserStatsProject={getUserStatsProject}
               createModule={createModule}
             />
             )
@@ -348,6 +403,57 @@ useEffect(()=>{
       </form>
    
   </div> 
+  <div className="bg-white rounded-lg shadow-lg p-6 mb-4">
+        <div className="text-xl font-bold mb-4">Projects Ongoing</div>
+        <form onSubmit={""} className="">
+    <div class="overflow-x-auto relative ">
+      {userProjects?.length ===0 ? <p>No Projects to show</p> :   <table class="min-w-full divide-y divide-gray-200">
+  <thead>
+    <tr>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Title
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Description
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Target Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Raised Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Remaining Funds
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Images
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+  <Fragment>
+          {onGoingProjects?.map((item)=>{
+            return (
+              <ModuleRow
+              key={item?.projectId}
+              item={item}
+              withdDrawProjectFunds={withdDrawProjectFunds}
+              getUserStatsProject={getUserStatsProject}
+              handleModules={handleModules}
+            />
+            )
+          })}
+           </Fragment>
+  </tbody>
+</table>  }
+  
+      </div>
+      </form>
+   
+  </div>
    </div>
     
   </div>
